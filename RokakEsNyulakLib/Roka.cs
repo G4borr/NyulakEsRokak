@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace RokakEsNyulakLib
@@ -8,65 +9,102 @@ namespace RokakEsNyulakLib
     {
         public int HungerLevel { get; set; }
         public bool IsAlive { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
 
-        public Fox()
+        public Fox(int x, int y)
         {
-            HungerLevel = 10;
+            HungerLevel = 20;
             IsAlive = true;
+            X = x;
+            Y = y;
         }
 
-        public void HuntRabbit(Field field)
+        public void HuntRabbit(Field[,] field)
         {
-            if (field.Rabbit != null)
+            if (field[X, Y].Rabbit != null)
             {
-                field.Rabbit = null; // Nyúl elpusztítása
-                HungerLevel = Math.Min(HungerLevel + 3, 10); // Jóllakottság növelése
+                field[X, Y].Rabbit.IsAlive = false;
+                field[X, Y].Rabbit = null; // Nyúl elpusztítása
+                HungerLevel += 10; // Jóllakottság növelése
+                Debug.WriteLine("Roka evett");
             }
         }
 
-        public void DecreaseHunger()
+        public void DecreaseHunger(Field[,] field)
         {
             HungerLevel--;
             if (HungerLevel <= 0)
             {
                 IsAlive = false; // Róka elpusztul, ha éhen hal
+                field[X, Y].Fox = null;
+                Debug.WriteLine("Roka ehenhalt");
             }
         }
 
         // Róka véletlenszerű mozgása
-        public void Move(Field[,] grid, int x, int y, Random random)
+        public void Move(Field[,] grid, (int, int) nyulPos, (int, int) nyulPos2)
         {
             int rows = grid.GetLength(0);
             int cols = grid.GetLength(1);
 
-            // Lehetséges irányok (fel, le, balra, jobbra)
-            List<int[]> directions = new List<int[]>
+            int xMove = 0;
+            int yMove = 0;
+
+            // 3    3
+            // 2    3   --   1
+            // 7    6   --   7
+
+            int dFrom1Rabbit = Math.Abs(X - nyulPos.Item1) + Math.Abs(Y - nyulPos.Item2);
+            int dFrom2Rabbit = Math.Abs(X - nyulPos2.Item1) + Math.Abs(Y - nyulPos2.Item2);
+
+
+            if (dFrom1Rabbit <= dFrom2Rabbit)
             {
-                new int[] { -1, 0 }, // fel
-                new int[] { 1, 0 },  // le
-                new int[] { 0, -1 }, // balra
-                new int[] { 0, 1 }   // jobbra
-            };
-
-            // Véletlenszerű sorrendben próbálkozunk
-            directions = directions.OrderBy(d => random.Next()).ToList();
-
-            foreach (var dir in directions)
-            {
-                int newX = x + dir[0];
-                int newY = y + dir[1];
-
-                // Ellenőrizzük, hogy az új koordináták a rácson belül vannak-e
-                if (newX >= 0 && newX < rows && newY >= 0 && newY < cols)
+                Debug.WriteLine("Following Rabbit1");
+                if (X != nyulPos.Item1)
                 {
-                    // Üres mezőre mozgás
-                    if (grid[newX, newY].Rabbit == null && grid[newX, newY].Fox == null)
-                    {
-                        grid[newX, newY].Fox = this; // Róka új pozíció
-                        grid[x, y].Fox = null; // Az eredeti mező most üres
-                        break; // Ha mozog, kilép a ciklusból
-                    }
+                    if (X > nyulPos.Item1)
+                    { xMove = -1; }
+                    else
+                    { xMove = 1; }
                 }
+                else
+                {
+                    if (Y > nyulPos.Item2)
+                    { yMove = -1; }
+                    else
+                    { yMove = 1; }
+                }
+            }
+            else {
+                Debug.WriteLine("Following Rabbit2");
+                if (X != nyulPos2.Item1)
+                {
+                    if (X > nyulPos2.Item1)
+                    { xMove = -1; }
+                    else
+                    { xMove = 1; }
+                }
+                else
+                {
+                    if (Y > nyulPos2.Item2)
+                    { yMove = -1; }
+                    else
+                    { yMove = 1; }
+                }
+            }
+
+            int newX = X + xMove;
+            int newY = Y + yMove;
+
+            // Ellenőrizzük, hogy az új koordináták a rácson belül vannak-e
+            if (newX >= 0 && newX < rows && newY >= 0 && newY < cols)
+            {
+                grid[newX, newY].Fox = this; // Róka új pozíció
+                grid[X, Y].Fox = null; // Az eredeti mező most üres
+                X = newX;
+                Y = newY;
             }
         }
     }
