@@ -21,61 +21,56 @@ public class Program
         }
 
         // Nyúl és róka létrehozása
-        Rabbit rabbit = new Rabbit();
-        Fox fox = new Fox();
+        int xR = random.Next(10);
+        int yR = random.Next(10);
+        Rabbit rabbit = new Rabbit(xR, yR);
+        grid[xR, yR].Rabbit = rabbit;
 
-        // Nyúl és róka elhelyezése a rácson
-        grid[5, 5].Rabbit = rabbit;
-        grid[0, 0].Fox = fox;
+        int xR2 = random.Next(10);
+        int yR2 = random.Next(10);
+        Rabbit rabbit2 = new Rabbit(xR2, yR2);
+        grid[xR2, yR2].Rabbit = rabbit2;
+
+        int xF = random.Next(10);
+        int yF = random.Next(10);
+        Fox fox = new Fox(xF, yF);
+        grid[xF, yF].Fox = fox;
 
         // Futassunk 10 kört a szimulációból
-        for (int turn = 0; turn < 10; turn++)
+        for (int turn = 0; turn < 50; turn++)
         {
-            Console.WriteLine($"Turn {turn + 1}:");
-
-            // Nyúl aktuális pozíciója
-            int rabbitX = 5, rabbitY = 5;
+            // Róka mozgása és táplálkozása
+            if (fox.IsAlive == true)
+            {
+                if (rabbit.IsAlive == false) { fox.Move(grid, (rabbit.X + 1000, rabbit.Y + 1000), (rabbit2.X, rabbit2.Y)); }
+                else if (rabbit2.IsAlive == false) { fox.Move(grid, (rabbit.X, rabbit.Y), (rabbit2.X + 1000, rabbit2.Y + 1000)); }
+                else { fox.Move(grid, (rabbit.X, rabbit.Y), (rabbit2.X, rabbit2.Y)); }
+                fox.HuntRabbit(grid);
+                fox.DecreaseHunger(grid);
+            }
 
             // Nyúl mozgása és táplálkozása
-            rabbit.Move(grid, rabbitX, rabbitY, random);
-            rabbit.Eat(grid[rabbitX, rabbitY]);
-            rabbit.DecreaseHunger();
-
-            // Nyúl pozíciójának frissítése
-            for (int i = 0; i < grid.GetLength(0); i++)
+            if (rabbit.IsAlive == true)
             {
-                for (int j = 0; j < grid.GetLength(1); j++)
-                {
-                    if (grid[i, j].Rabbit == rabbit)
-                    {
-                        rabbitX = i;
-                        rabbitY = j;
-                        break;
-                    }
-                }
+                rabbit.Eat(grid);
+                rabbit.Move(grid);
+                rabbit.DecreaseHunger();
             }
 
-            // Róka aktuális pozíciója
-            int foxX = 0, foxY = 0;
-
-            // Róka mozgása és táplálkozása
-            fox.Move(grid, foxX, foxY, random);
-            fox.HuntRabbit(grid[foxX, foxY]);
-            fox.DecreaseHunger();
-
-            // Róka pozíciójának frissítése
-            for (int i = 0; i < grid.GetLength(0); i++)
+            // Nyúl mozgása és táplálkozása
+            if (rabbit2.IsAlive == true)
             {
-                for (int j = 0; j < grid.GetLength(1); j++)
-                {
-                    if (grid[i, j].Fox == fox)
-                    {
-                        foxX = i;
-                        foxY = j;
-                        break;
-                    }
-                }
+                rabbit2.Eat(grid);
+                rabbit2.Move(grid);
+                rabbit2.DecreaseHunger();
             }
+
+            // Megjelenítés
+            Console.Clear();
+            Console.WriteLine($"Turn {turn + 1}:");
+
+            // Rács állapotának kiírása
+            PrintGrid(grid);
 
             // Fű növekedése
             foreach (var field in grid)
@@ -83,8 +78,8 @@ public class Program
                 field.GrowGrass();
             }
 
-            // Rács állapotának kiírása
-            PrintGrid(grid);
+            // Wait
+            Thread.Sleep(300);
         }
     }
 
@@ -103,9 +98,17 @@ public class Program
                 {
                     Console.Write("F "); // Róka
                 }
-                else
+                else if (grid[i, j].GrassState == 0)
                 {
-                    Console.Write(". "); // Üres mező
+                    Console.Write(". "); // Zsenge fű
+                }
+                else if (grid[i, j].GrassState == 1)
+                {
+                    Console.Write(", "); // Friss fű
+                }
+                else if (grid[i, j].GrassState == 2)
+                {
+                    Console.Write(": "); // Erős fűcsomó
                 }
             }
             Console.WriteLine();
