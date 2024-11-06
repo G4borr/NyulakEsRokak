@@ -92,11 +92,15 @@ public class Program
             {
                 if (grid[i, j].Rabbit != null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write("R "); // Nyúl
+                    Console.ResetColor();
                 }
                 else if (grid[i, j].Fox != null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write("F "); // Róka
+                    Console.ResetColor();
                 }
                 else if (grid[i, j].GrassState == 0)
                 {
