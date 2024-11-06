@@ -2,8 +2,8 @@ namespace RokakEsNyulakLib
 {
     public class Field
     {
-        public Rabbit Rabbit { get; set; }
-        public Fox Fox { get; set; }
+        public Rabbit? Rabbit { get; set; }
+        public Fox? Fox { get; set; }
         public int GrassState { get; set; } // 0: Nincs fű, 1: Zsenge fű, 2: Kifejlett fű
 
         public Field()
