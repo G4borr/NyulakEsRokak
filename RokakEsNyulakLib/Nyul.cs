@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace RokakEsNyulakLib
@@ -8,29 +9,28 @@ namespace RokakEsNyulakLib
     {
         public int HungerLevel { get; set; }
         public bool IsAlive { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
 
-        public Rabbit()
+        public Rabbit(int x, int y)
         {
             HungerLevel = 5;
             IsAlive = true;
+            X = x;
+            Y = y;
         }
 
-        public void Eat(Field field)
+        public void Eat(Field[,] field)
         {
-            if (field.GrassState == 1) // Zsenge fű
+            if (field[X, Y].GrassState == 1) // Zsenge fű
             {
                 HungerLevel++;
-                field.GrassState = 0; // Fű állapotának csökkentése
+                field[X, Y].GrassState = 0; // Fű állapotának csökkentése
             }
-            else if (field.GrassState == 2) // Kifejlett fű
+            else if (field[X, Y].GrassState == 2) // Kifejlett fű
             {
                 HungerLevel += 2;
-                field.GrassState = 1; // Fű állapotának csökkentése
-            }
-
-            if (HungerLevel > 5)
-            {
-                HungerLevel = 5; // Maximális jóllakottság
+                field[X, Y].GrassState = 0; // Fű állapotának csökkentése
             }
         }
 
@@ -44,7 +44,7 @@ namespace RokakEsNyulakLib
         }
 
         // Nyúl mozgása egy szomszédos üres mezőre véletlenszerűen
-        public void Move(Field[,] grid, int x, int y, Random random)
+        public void Move(Field[,] grid)
         {
             int rows = grid.GetLength(0);
             int cols = grid.GetLength(1);
@@ -58,22 +58,26 @@ namespace RokakEsNyulakLib
                 new int[] { 0, 1 }   // jobbra
             };
 
+            Random r = new Random();
+
             // Véletlenszerű sorrendben próbálkozunk
-            directions = directions.OrderBy(d => random.Next()).ToList();
+            directions = directions.OrderBy(d => r.Next()).ToList();
 
             foreach (var dir in directions)
             {
-                int newX = x + dir[0];
-                int newY = y + dir[1];
+                int newX = X + dir[0];
+                int newY = Y + dir[1];
 
                 // Ellenőrizzük, hogy az új koordináták a rácson belül vannak-e
                 if (newX >= 0 && newX < rows && newY >= 0 && newY < cols)
                 {
                     // Üres mezőre mozgás
-                    if (grid[newX, newY].Rabbit == null && grid[newX, newY].Fox == null)
+                    if (grid[newX, newY].Rabbit == null)
                     {
                         grid[newX, newY].Rabbit = this; // Nyúl új pozíció
-                        grid[x, y].Rabbit = null; // Az eredeti mező most üres
+                        grid[X, Y].Rabbit = null; // Az eredeti mező most üres
+                        X = newX;
+                        Y = newY;
                         break; // Ha mozog, kilép a ciklusból
                     }
                 }
