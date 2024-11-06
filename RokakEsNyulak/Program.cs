@@ -1,5 +1,5 @@
 // Ikt Projektmunka: The game of life
-
+// Pongrácz Gábor, Farkas Botond
 
 using RokakEsNyulakLib;
 using System;
@@ -9,7 +9,6 @@ public class Program
     public static void Main()
     {
         Field[,] grid = new Field[10, 10]; // Létrehozunk egy 10x10-es rácsot
-        Random random = new Random(); // Véletlenszám generátor
 
         // Rács inicializálása
         for (int i = 0; i < grid.GetLength(0); i++)
