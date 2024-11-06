@@ -35,7 +35,7 @@ public class Program
         Fox fox = new Fox(xF, yF);
         grid[xF, yF].Fox = fox;
 
-        // Futassunk 10 kört a szimulációból
+        // 10 szimulációs kör futtatása
         for (int turn = 0; turn < 50; turn++)
         {
             // Róka mozgása és táplálkozása
@@ -66,7 +66,7 @@ public class Program
 
             // Megjelenítés
             Console.Clear();
-            Console.WriteLine($"Turn {turn + 1}:");
+            Console.WriteLine($"Kör {turn + 1}:");
 
             // Rács állapotának kiírása
             PrintGrid(grid);
@@ -77,7 +77,7 @@ public class Program
                 field.GrowGrass();
             }
 
-            // Wait
+            // Várakoztatás
             Thread.Sleep(300);
         }
     }
@@ -92,22 +92,22 @@ public class Program
                 if (grid[i, j].Rabbit != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write("R "); // Nyúl
+                    Console.Write("N "); // Nyúl
                     Console.ResetColor();
                 }
                 else if (grid[i, j].Fox != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("F "); // Róka
+                    Console.Write("R "); // Róka 
                     Console.ResetColor();
                 }
                 else if (grid[i, j].GrassState == 0)
                 {
-                    Console.Write(". "); // Zsenge fű
+                    Console.Write(". "); // Zsenge fűcsomó
                 }
                 else if (grid[i, j].GrassState == 1)
                 {
-                    Console.Write(", "); // Friss fű
+                    Console.Write(", "); // Friss fűcsomó
                 }
                 else if (grid[i, j].GrassState == 2)
                 {
