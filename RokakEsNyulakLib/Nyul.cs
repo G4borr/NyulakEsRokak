@@ -20,30 +20,32 @@ namespace RokakEsNyulakLib
             Y = y;
         }
 
+        // Nyúl táplálkozás
         public void Eat(Field[,] field)
         {
-            if (field[X, Y].GrassState == 1) // Zsenge fű
+            if (field[X, Y].GrassState == 1) // Friss fűcsomó
             {
                 HungerLevel++;
-                field[X, Y].GrassState = 0; // Fű állapotának csökkentése
+                field[X, Y].GrassState = 0; // Zsenge fűcsomó állapotának csökkentése
             }
-            else if (field[X, Y].GrassState == 2) // Kifejlett fű
+            else if (field[X, Y].GrassState == 2) // Erős fűcsomó
             {
                 HungerLevel += 2;
-                field[X, Y].GrassState = 0; // Fű állapotának csökkentése
+                field[X, Y].GrassState = 0; // Fűcsomó állapotának csökkentése
             }
         }
-
-        public void DecreaseHunger()
+        
+        // Éhség csökkentése
+        public void DecreaseHunger() 
         {
             HungerLevel--;
             if (HungerLevel <= 0)
             {
-                IsAlive = false; // Nyúl elpusztul, ha éhen hal
+                IsAlive = false; // Nyúl éhen hal ha nincs fűcsomó
             }
         }
 
-        // Nyúl mozgása egy szomszédos üres mezőre véletlenszerűen
+        // Nyúl mozgása egy szomszédos üres mezőre
         public void Move(Field[,] grid)
         {
             int rows = grid.GetLength(0);
@@ -60,7 +62,7 @@ namespace RokakEsNyulakLib
 
             Random r = new Random();
 
-            // Véletlenszerű sorrendben próbálkozunk
+            // Véletlenszerű sorrendben megpróbálunk egy irányt
             directions = directions.OrderBy(d => r.Next()).ToList();
 
             foreach (var dir in directions)

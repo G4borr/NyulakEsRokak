@@ -20,6 +20,7 @@ namespace RokakEsNyulakLib
             Y = y;
         }
 
+        // Nyúl levadászása
         public void HuntRabbit(Field[,] field)
         {
             if (field[X, Y].Rabbit != null)
@@ -27,10 +28,11 @@ namespace RokakEsNyulakLib
                 field[X, Y].Rabbit.IsAlive = false;
                 field[X, Y].Rabbit = null; // Nyúl elpusztítása
                 HungerLevel += 10; // Jóllakottság növelése
-                Debug.WriteLine("Roka evett");
+                Debug.WriteLine("Róka evett");
             }
         }
 
+        // Éhség csökkentése
         public void DecreaseHunger(Field[,] field)
         {
             HungerLevel--;
@@ -38,11 +40,11 @@ namespace RokakEsNyulakLib
             {
                 IsAlive = false; // Róka elpusztul, ha éhen hal
                 field[X, Y].Fox = null;
-                Debug.WriteLine("Roka ehenhalt");
+                Debug.WriteLine("Róka éhenhalt");
             }
         }
 
-        // Róka véletlenszerű mozgása
+        // Róka mozgása
         public void Move(Field[,] grid, (int, int) nyulPos, (int, int) nyulPos2)
         {
             int rows = grid.GetLength(0);
@@ -51,17 +53,15 @@ namespace RokakEsNyulakLib
             int xMove = 0;
             int yMove = 0;
 
-            // 3    3
-            // 2    3   --   1
-            // 7    6   --   7
-
+            // Számított távolság a nyúltól
             int dFrom1Rabbit = Math.Abs(X - nyulPos.Item1) + Math.Abs(Y - nyulPos.Item2);
             int dFrom2Rabbit = Math.Abs(X - nyulPos2.Item1) + Math.Abs(Y - nyulPos2.Item2);
 
+            // Közelebbi nyúl követése 
 
             if (dFrom1Rabbit <= dFrom2Rabbit)
             {
-                Debug.WriteLine("Following Rabbit1");
+                Debug.WriteLine("Követés: Rabbit1");
                 if (X != nyulPos.Item1)
                 {
                     if (X > nyulPos.Item1)
@@ -78,7 +78,7 @@ namespace RokakEsNyulakLib
                 }
             }
             else {
-                Debug.WriteLine("Following Rabbit2");
+                Debug.WriteLine("Követés: Rabbit2");
                 if (X != nyulPos2.Item1)
                 {
                     if (X > nyulPos2.Item1)
