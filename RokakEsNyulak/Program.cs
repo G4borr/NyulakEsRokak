@@ -10,6 +10,9 @@ public class Program
     {
         Field[,] grid = new Field[10, 10]; // Létrehozunk egy 10x10-es rácsot
 
+        // Random
+        Random random = new Random();
+
         // Rács inicializálása
         for (int i = 0; i < grid.GetLength(0); i++)
         {
